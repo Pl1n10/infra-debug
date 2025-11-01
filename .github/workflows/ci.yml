@@ -1,17 +1,41 @@
-name: CI
+# .github/workflows/ci.yml
+name: Infra CI
+
 on:
   push:
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
+
 jobs:
   ci:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup deps
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup dependencies
         run: |
-          sudo apt-get update
+          sudo apt-get update -qq
           sudo apt-get install -y terraform ansible ansible-lint yamllint pre-commit sqlite3
+          terraform -version
+          ansible --version
+          ansible-lint --version
+          pre-commit --version
+
       - name: Terraform init (no backend)
         run: make tf-init
-      - name: Local CI
+
+      - name: Local CI pipeline
         run: make ci
+
+      - name: Upload CI logs (artifact)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-logs
+          path: |
+            .terraform/
+            ansible/
+            terraform/
