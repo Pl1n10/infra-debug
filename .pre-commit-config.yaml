@@ -1,0 +1,27 @@
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.88.0
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_validate
+
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        files: ^ansible/.*\.ya?ml$
+
+  # usa l’ansible-lint installato via APT (linguaggio: system)
+  - repo: local
+    hooks:
+      - id: ansible-lint-system
+        name: ansible-lint (system)
+        entry: ansible-lint
+        language: system
+        files: ^ansible/.*\.ya?ml$
+  #  Gitleaks – secret scanning
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.4
+    hooks:
+      - id: gitleaks
+        args: ["protect", "--verbose", "--redact"]

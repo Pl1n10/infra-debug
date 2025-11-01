@@ -1,0 +1,12 @@
+---
+- name: Demo play
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: Ensure curl is present (Debian/Ubuntu)
+      ansible.builtin.apt:
+        name: curl
+        state: present
+        update_cache: false
+      become: true
+      when: ansible_facts['os_family'] == "Debian"

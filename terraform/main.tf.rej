@@ -1,0 +1,12 @@
+--- terraform/main.tf
++++ terraform/main.tf
+@@ -1,6 +1,6 @@
+ resource "aws_s3_bucket" "logs" {
+   bucket = var.project + "-logs"
+ 
+-  tags = {
+-    Project = "duplicate"
+-  }
++  tags = {
++    Project = var.project
++  }

@@ -1,0 +1,4 @@
+enabled:
+- ansible
+- python
+- terraform

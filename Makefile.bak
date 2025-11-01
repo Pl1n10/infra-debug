@@ -1,0 +1,33 @@
+SHELL := /bin/bash
+OLLAMA_HOST ?= http://100.100.140.30:11434
+EMBED_MODEL ?= nomic-embed-text
+LOCAL_MODEL ?= qwen2.5-coder:7b
+
+# --- Index mirati ---
+index:terraform
+index:terraform:
+	python3 .tools/index.py --repo ./terraform --ollama $(OLLAMA_HOST) --embed $(EMBED_MODEL) --max_chunks 2000
+
+index:ansible:
+	python3 .tools/index.py --repo ./ansible --ollama $(OLLAMA_HOST) --embed $(EMBED_MODEL) --max_chunks 2000
+
+# --- Terraform ---
+tf-init:
+	cd terraform && terraform init -backend=false
+tf-validate:
+	cd terraform && terraform validate -no-color
+tf-plan:
+	cd terraform && terraform plan -no-color -input=false -var="project=llm-demo" || true
+
+# --- Ansible ---
+ans-lint:
+	ansible-lint ansible/playbook.yml -v || true
+ans-check:
+	ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --check -vvv || true
+
+# --- LLM helpers (analyst/fixer) ---
+analyst:
+	python3 .tools/ask_analyst.py --ollama $(OLLAMA_HOST) --local-model $(LOCAL_MODEL) --k $${K:-16} --query "$${Q}" --trace "$${TRACE}" --diff "$${DIFF}"
+
+fixer:
+	python3 .tools/ask_fixer.py --ollama $(OLLAMA_HOST) --model $(LOCAL_MODEL) --k $${K:-16} --query "$${Q}" --trace "$${TRACE}" --diff "$${DIFF}"

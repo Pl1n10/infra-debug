@@ -1,0 +1,44 @@
+.rag.sqlite
+.terraform/
+*.tfstate*
+*.tfstate.backup
+__pycache__/
+artifacts/
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*.override.tf
+*.override.tf.json
+terraform.tfvars
+*.tfvars.json
+
+# Ansible
+*.retry
+.ansible/
+~/.ansible/
+
+# LLM / RAG
+.rag.sqlite
+artifacts/
+*.patch
+
+# Python tools / venv
+.venv/
+__pycache__/
+*.pyc
+
+# Pre-commit / cache varie
+.pre-commit-config.yaml.versions
+.cache/
+.local/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

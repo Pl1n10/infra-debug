@@ -1,0 +1,17 @@
+name: CI
+on:
+  push:
+  pull_request:
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y terraform ansible ansible-lint yamllint pre-commit sqlite3
+      - name: Terraform init (no backend)
+        run: make tf-init
+      - name: Local CI
+        run: make ci

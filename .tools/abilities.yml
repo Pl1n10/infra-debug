@@ -1,0 +1,34 @@
+# .tools/abilities.yml
+abilities:
+  terraform:
+    files_glob: "terraform/**/*.tf"
+    index_exts: [".tf", ".tfvars"]
+    lint: "terraform -chdir=terraform fmt -check"
+    validate: "terraform -chdir=terraform validate -no-color"
+    check: "terraform -chdir=terraform plan -no-color -input=false -var=\"project=${TF_PROJECT:-llm-demo}\" || true"
+    run: ""
+    fixer_prompt: |
+      LANGUAGE: HCL. TARGET FILES: terraform/main.tf ONLY.
+      Fix issues surfaced by validate/plan. Return a MINIMAL unified diff.
+
+  ansible:
+    files_glob: "ansible/**/*.{yml,yaml}"
+    index_exts: [".yml", ".yaml", ".ini"]
+    lint: "ansible-lint ansible/playbook.yml -v || true"
+    validate: ""
+    check: "ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --check -vvv || true"
+    run: "ansible-playbook -i ansible/inventory.ini ansible/playbook.yml -vv"
+    fixer_prompt: |
+      LANGUAGE: Ansible/YAML. TARGET FILE: ansible/playbook.yml ONLY.
+      Fix lint/check findings without changing semantics. MINIMAL unified diff.
+
+  python:
+    files_glob: "src/**/*.py"
+    index_exts: [".py"]
+    lint: "ruff check src || true"
+    validate: "python -m pyflakes src || true"
+    check: "pytest -q || true"
+    run: "python -m src || true"
+    fixer_prompt: |
+      LANGUAGE: Python. TARGET FILES: src/**/*.py.
+      Fix syntax/runtime issues indicated by lint/validate/check. MINIMAL unified diff against the touched file(s).
